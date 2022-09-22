@@ -1,5 +1,6 @@
 const Room = require("../models/Room");
 const asyncWrapper = require("../middleware/async");
+const { createCustomError } = require("../errors/custom-error");
 
 const getAllRooms = asyncWrapper(async (req, res) => {
   const rooms = await Room.find({});
@@ -11,9 +12,13 @@ const createRoom = asyncWrapper(async (req, res) => {
   res.status(201).json({ room });
 });
 
-const getRoom = asyncWrapper(async (req, res) => {
+const getRoom = asyncWrapper(async (req, res, next) => {
   const { color: roomColor } = req.params;
   const rooms = await Room.find({ colors: { $all: [roomColor] } });
+
+  if (rooms.length === 0) {
+    return next(createCustomError("No data was found", 404));
+  }
   res.status(200).json({ rooms });
 });
 

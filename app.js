@@ -2,6 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const rooms = require("./routes/rooms/rooms");
 const connectDB = require("./db/connect");
+const errorHandlerMiddleware = require("./middleware/errorHandlerMiddleware");
 require("dotenv").config();
 
 const app = express();
@@ -11,6 +12,7 @@ app.use(express.json());
 app.use(morgan("tiny"));
 
 app.use("/api/v1/rooms", rooms);
+app.use(errorHandlerMiddleware);
 
 const startApp = async () => {
   try {
